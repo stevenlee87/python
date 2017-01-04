@@ -29,3 +29,10 @@ print("9,", names.count("Tom"))  # 查找列表中某个字串符的数量
 
 names.reverse()
 print("10,", names)  # 列表反转
+
+names2 = names.copy()
+print(names)
+print(names2)
+names[0] = "jerry"
+print(names)
+print(names2)
