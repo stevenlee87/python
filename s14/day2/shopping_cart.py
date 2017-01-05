@@ -20,7 +20,8 @@ while True:
             salary = int(salary)
             salary -= int(i[2])
             print("added {_goods} to you shopping cart!".format(_goods=i))
-            continue
-        else:
+            break
+        elif buy == i[0] and int(salary) < int(i[2]):
             print("Your balance is not enough to buy goods ", i)
+        else:
             continue
