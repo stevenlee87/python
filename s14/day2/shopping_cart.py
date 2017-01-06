@@ -7,7 +7,13 @@ shopping_cart = []
 salary = input("Please input your salary:")
 
 while True:
+    print("")
     print("your account balance is ", salary)
+    if len(shopping_cart):
+        print("your shopping cart have: ", shopping_cart)
+    else:
+        print("your shopping cart have nothing!")
+    print("")
     print("goods list is:", goods_list)
 
     buy = input("Please input which goods(number) you want to buy:")
