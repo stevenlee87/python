@@ -41,4 +41,12 @@ while True:
                         print("\t\t", i3)
                     choice3 = input("please input address3:")
                     if choice3 in data[choice][choice2]:
-                        print(data[choice][choice2])
+                        for i4 in data[choice][choice2][choice3]:
+                            print(i4)
+                        choice4 = input("Last level,please input b to return:")
+                        if choice4 == "b":
+                            pass
+                    if choice3 == "b":
+                        break
+            if choice2 == "b":
+                break
