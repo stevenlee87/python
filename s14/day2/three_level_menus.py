@@ -25,18 +25,18 @@ data = {
     }
 }
 
-while True:
+exit_flag = False
+while not exit_flag:
     for i in data:
         print(i)
-
     choice = input("please input address1:")
     if choice in data:
-        while True:
+        while not exit_flag:
             for i2 in data[choice]:
                 print("\t", i2)
             choice2 = input("please input address2:")
             if choice2 in data[choice]:
-                while True:
+                while not exit_flag:
                     for i3 in data[choice][choice2]:
                         print("\t\t", i3)
                     choice3 = input("please input address3:")
@@ -46,7 +46,15 @@ while True:
                         choice4 = input("Last level,please input b to return:")
                         if choice4 == "b":
                             pass
+                        elif choice4 == "q":
+                            exit_flag = True
                     if choice3 == "b":
                         break
+                    elif choice3 == "q":
+                        exit_flag = True
             if choice2 == "b":
                 break
+            elif choice2 == "q":
+                exit_flag = True
+    elif choice == "q":
+        exit_flag = True
