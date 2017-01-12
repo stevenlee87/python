@@ -17,6 +17,7 @@ if salary.isdigit():
     while True:
         print("your current balance is: \033[31;1m%s\033[0m" % salary)
         print("-----------shopping list------------")
+        # enumerate(iterable[, start]) -> iterator for index, value of iterable
         for index, item in enumerate(goods_list):
             print(index, item)
 
