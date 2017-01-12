@@ -26,8 +26,8 @@ info.popitem()  # 随机删除，但是我测试是删除最后一个key
 print(info)
 
 # 改
-print(info)
-info['stu1101'] = '杰克'
+# info['stu1101'] = '杰克'
+# print(info)
 
 # 查
 print(info['stu1101'])  # 这种查找方式必须确定key存在才可以用
@@ -60,5 +60,19 @@ b = {
     '1': '5',
     '2': '6'
 }
-info.update(b)
+info.update(b)  # 字典合并，有交叉的就覆盖，没有交叉的就创建
 print(info)
+
+print(info.items())  # 字典转换成列表
+
+c = dict.fromkeys([1, 2, 3], ['888', {'name': 'steven'}, '666'])
+c[3][1]['name'] = "jack"  # shallow copy 坑啊
+print(c)
+# print {1: ['888', {'name': 'jack'}, '666'], 2: ['888', {'name': 'jack'}, '666'], 3: ['888', {'name': 'jack'}, '666']}
+
+# 字典循环, for i in info效率高，直接通过key，取出值，建议用这个
+for i in info:
+    print(i, info[i])
+
+for k, v in info.items():  # 把字典转换成列表，当数据量很大的时候，效率很差
+    print(k ,v)

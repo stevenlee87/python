@@ -65,3 +65,10 @@ p1[0] = 'stevenlee'
 p2[0] = 'jane'
 print(p1)
 print(p2)
+
+a = [1, 2, 3]
+b = a
+a[1] = 555
+print(a)
+print("b is", b)
+
