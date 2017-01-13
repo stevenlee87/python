@@ -28,4 +28,4 @@ for i in range(3):
 else:
     print("you have tried many times,your acount will be locked!")
     with open("lock.txt", 'a') as f:
-        f.write('{_username} locked'.format(_username = username))
+        f.write('{_username} locked'.format(_username=username))
