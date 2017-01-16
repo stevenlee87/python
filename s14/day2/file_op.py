@@ -16,4 +16,7 @@ f.seek(0)
 print(f.readline())
 
 print(f.encoding)
+print(f.fileno())
+# print(f.flush())  文件不是实时写入的，先执行f.write("hello\n")
+
 f.close()
