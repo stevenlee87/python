@@ -1,6 +1,6 @@
+import time
 __author__ = "Steven Lee"
 
-import time
 
 # 装饰器
 # 定义：("器"就是函数的意思)：本质是函数(装饰其他函数),就是为其他函数添加附加功能
