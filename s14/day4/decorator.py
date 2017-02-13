@@ -13,13 +13,15 @@ import time
 # 3.嵌套函数
 # 高阶函数+嵌套函数=>>装饰器
 
+
 def timer(func):
-    def wrapper(*args, **kwargs):
-        start_time=time.time()
+    def wrapper():
+        start_time = time.time()
         func()
-        stop_time=time.time()
-        print('the func run time is %s' %(stop_time-start_time))
+        stop_time = time.time()
+        print('the func run time is %s' % (stop_time-start_time))  # stop_time减去start_time
     return wrapper
+
 
 @timer
 def test1():
@@ -27,4 +29,3 @@ def test1():
     print('in the test1')
 
 test1()
-
