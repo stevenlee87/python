@@ -27,3 +27,4 @@ def test1():
     print('in the test1')
 
 timer(test1)  # 改变了函数的调用方式
+# test1()
