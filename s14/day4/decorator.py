@@ -14,6 +14,23 @@ __author__ = "Steven Lee"
 # 高阶函数+嵌套函数=>>装饰器
 
 
+# def timer(func):
+#     def wrapper():
+#         start_time = time.time()
+#         func()
+#         stop_time = time.time()
+#         print('the func run time is %s' % (stop_time-start_time))  # stop_time减去start_time
+#     return wrapper
+#
+#
+# @timer
+# def test1():
+#     time.sleep(3)
+#     print('in the test1')
+#
+# test1()
+
+
 def timer(func):
     def wrapper():
         start_time = time.time()
@@ -23,9 +40,9 @@ def timer(func):
     return wrapper
 
 
-@timer
 def test1():
     time.sleep(3)
     print('in the test1')
 
-test1()
+f = timer(test1)
+f()
