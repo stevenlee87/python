@@ -44,5 +44,5 @@ def test1():
     time.sleep(3)
     print('in the test1')
 
-f = timer(test1)
-f()
+test1 = timer(test1)
+test1()
