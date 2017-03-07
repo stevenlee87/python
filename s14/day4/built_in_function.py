@@ -1,3 +1,4 @@
+import functools
 __author__ = "Steven Lee"
 
 # Return True if all elements of the iterable are true (or if the iterable is empty). Equivalent to:
@@ -19,6 +20,7 @@ print(b[0], b[1])
 b[1] = 100
 print(b)
 
+
 def sayhi():
     pass
 print(callable(sayhi))
@@ -26,6 +28,34 @@ print(callable(sayhi))
 print(chr(97))  # 返回ascii 码的对应表 print a
 print(ord('a'))  # print 97 与a丢应
 
-code = "for i in range(10):print(i)"
-c = compile(code, '', 'exec')  # compile 没有什么用！
-eval(c)  # 把一个字符串转换成一个字典
+# code = "for i in range(10):print(i)"
+# c = compile(code, '', 'exec')  # compile 没有什么用！
+# eval(c)  # 把一个字符串转换成一个字典
+
+# (lambda n:print(n))(5)
+# calc = lambda n:print(n)
+# calc(5)
+
+# res = filter(lambda n: n > 5, range(10))
+# for i in res:
+#     print(i)
+#
+# print("----map----")
+# res = map(lambda n: n * n, range(10))
+# for i in res:
+#     print(i)
+
+# import functools
+res = functools.reduce(lambda x, y: x + y, range(10))  # 累加，打印从0加到9，等于45
+print(res)
+
+a = frozenset([1, 4, 333, 212])  # 不可变集合
+print(globals())  # 打印整个程序所有的变量的key-value
+
+print(hash('alex'))
+
+
+def test():  # locals() 打印局部变量
+    local_var = 333
+    print(locals())
+test()
