@@ -68,10 +68,12 @@ print(round(1.3342, 2))  # 保留两位
 d = {6: 2, 8: 0, 1: 4, -5: 6, 99: 11, 4: 22}
 print(d)
 print(sorted(d.items()))  # 按key来排序
-print(sorted(d.items(), key=lambda x:x[1]))  # 按照value来排序
+print(sorted(d.items(), key=lambda x: x[1]))  # 按照value来排序
 
 # zip 合并两个列表
 list_a = [1, 2, 3, 4]
 list_b = ['a', 'b', 'c', 'd', 'e']
 for i in zip(list_a, list_b):
     print(i)
+
+__import__('decorator')
