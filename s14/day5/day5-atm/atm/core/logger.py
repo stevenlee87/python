@@ -24,6 +24,8 @@ def logger(log_type):
     fh = logging.FileHandler(log_file)
     fh.setLevel(settings.LOG_LEVEL)
     # create formatter
+    # %(asctime)s 字符串形式的当前时间。默认格式是 “2017-03-17 16:49:45,896”。逗号后面的是毫秒
+    #
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # add formatter to ch and fh
