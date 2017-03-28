@@ -1,5 +1,8 @@
 import time
 __author__ = "Steven Lee"
+# 函数就是一种“变量”
+# a.把一个函数名当做实参传给另外一个函数(在不修改被装饰函数源代码的情况下为其添加功能)
+# b.返回值中包含函数名(不修改函数的调用方式)
 
 
 def timer(func):
@@ -16,7 +19,7 @@ def test1():
     time.sleep(3)
     print("in the test1")
 
-@timer  # test2 = timer(test2) = deco test2() = deco()
+@timer  # test2 = timer(test2) = deco  test2(name) = deco(name)
 def test2(name, age):
     print("test2:", name, age)
 
