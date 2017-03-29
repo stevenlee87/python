@@ -20,6 +20,7 @@ def auth(auth_type):
                     print("\033[31;1mInvalid username or password\033[0m")
                     exit()
             elif auth_type == "ldap":
+                func()
                 print("ldap,exit")
 
         return wrapper

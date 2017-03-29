@@ -78,6 +78,7 @@ def acc_login(user_data,log_obj):
         account = input("\033[32;1maccount:\033[0m").strip()
         password = input("\033[32;1mpassword:\033[0m").strip()
         auth = acc_auth2(account, password)
+        print("auth is", auth)
         if auth: #not None means passed the authentication
             user_data['is_authenticated'] = True
             user_data['account_id'] = account

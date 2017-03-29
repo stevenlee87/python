@@ -30,7 +30,7 @@ def db_handler():
 
 
 
-def file_execute(sql,**kwargs):
+def file_execute(sql,**kwargs):  # "select * from accounts where account=%s" % account
     conn_params = settings.DATABASE
     db_path = '%s/%s' % (conn_params['path'], conn_params['name'])
 
@@ -38,14 +38,15 @@ def file_execute(sql,**kwargs):
     sql_list = sql.split("where")
     print(sql_list)
     if sql_list[0].startswith("select") and len(sql_list)> 1:#has where clause
-        column,val = sql_list[1].strip().split("=")
+        column,val = sql_list[1].strip().split("=")  # colume=account val=1234
 
         if column == 'account':
-            account_file = "%s/%s.json" % (db_path, val)
+            account_file = "%s/%s.json" % (db_path, val)  # db_path = db/accounts/ db_path = 'path': "%s/db" % BASE_DIR   db_path = '%s/%s' % (conn_params['path'], conn_params['name'])   'name':'accounts',
             print(account_file)
             if os.path.isfile(account_file):
                 with open(account_file, 'r') as f:
                     account_data = json.load(f)
+                    print("account_data is", account_data)
                     return account_data
             else:
                 exit("\033[31;1mAccount [%s] does not exist!\033[0m" % val )
