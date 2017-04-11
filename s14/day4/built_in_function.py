@@ -26,7 +26,7 @@ def sayhi():
 print(callable(sayhi))
 
 print(chr(97))  # 返回ascii 码的对应表 print a
-print(ord('a'))  # print 97 与a丢应
+print(ord('a'))  # print 97 与a对应
 
 # code = "for i in range(10):print(i)"
 # c = compile(code, '', 'exec')  # compile 没有什么用！

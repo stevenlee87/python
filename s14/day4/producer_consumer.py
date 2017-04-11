@@ -1,8 +1,5 @@
 import time
-
 __author__ = "Steven Lee"
-
-
 # 协程
 
 
@@ -25,6 +22,5 @@ def producer(name):
         print("%s做了1个包子,分成了两半!" % name)
         c.send(i)
         c2.send(i)
-
 
 producer("alex")
