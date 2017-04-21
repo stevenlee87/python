@@ -1,4 +1,5 @@
 import time
+import datetime
 __author__ = "Steven Lee"
 
 # 1.timestamps transfer to strct_time
@@ -31,3 +32,13 @@ print(time.asctime(x))  # print Tue Apr 11 17:20:21 2017
 
 # 6.timestamps transfer to %a %b %d %H:%M:%S %Y 串
 print(time.ctime(1491902421))  # print Tue Apr 11 17:20:21 2017
+
+print("-----------------")
+print(datetime.datetime.now())  # 2017-04-21 15:30:13.692924
+print(time.time())
+print(datetime.date.fromtimestamp(time.time()))  # 时间戳直接转成日期格式 2017-04-21
+
+print(datetime.datetime.now() + datetime.timedelta(3))  # 当前时间+3天
+print(datetime.datetime.now() + datetime.timedelta(-3))  # 当前时间-3天
+print(datetime.datetime.now() + datetime.timedelta(hours=3))  # 当前时间+3小时
+print(datetime.datetime.now() + datetime.timedelta(minutes=30))  # 当前时间+30分
