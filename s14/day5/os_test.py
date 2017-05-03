@@ -1,4 +1,5 @@
 import os
+import time
 __author__ = "Steven Lee"
 
 os.getcwd()  # 获取当前工作目录，即当前python脚本工作的目录路径
@@ -24,14 +25,18 @@ print(os.pathsep)  # 输出用于分割文件路径的字符串
 print(os.name)  # 输出字符串指示当前使用平台。win->'nt'; Linux->'posix'
 # os.system("bash command")  运行shell命令，直接显示
 print(os.environ)  # 获取系统环境变量
-# os.path.abspath(path)  返回path规范化的绝对路径
-# os.path.split(path)  将path分割成目录和文件名二元组返回
-# os.path.dirname(path)  返回path的目录。其实就是os.path.split(path)的第一个元素
-# os.path.basename(path)  返回path最后的文件名。如何path以／或\结尾，那么就会返回空值。即os.path.split(path)的第二个元素
-# os.path.exists(path)  如果path存在，返回True；如果path不存在，返回False
-# os.path.isabs(path)  如果path是绝对路径，返回True
-# os.path.isfile(path)  如果path是一个存在的文件，返回True。否则返回False
-# os.path.isdir(path)  如果path是一个存在的目录，则返回True。否则返回False
+print(os.path.abspath(r'd:\project\python\README.md'))  # 返回path规范化的绝对路径
+print(os.path.split(r'd:\project\python\README.md'))  # 将path分割成目录和文件名二元组返回
+print(os.path.dirname(r'd:\project\python\README.md'))  # 返回path的目录。其实就是os.path.split(path)的第一个元素
+print(os.path.basename(r'd:\project\python\README.md'))  # 返回path最后的文件名。如何path以／或\结尾，那么就会返回空值。即os.path.split(path)的第二个元素
+print(os.path.exists(r'd:\project\python\README.md'))  # 如果path存在，返回True；如果path不存在，返回False
+print(os.path.isabs(r'project\python\README.md'))  # 如果path是绝对路径，返回True
+print(os.path.isfile(r'd:\project\python\README.md'))  # 如果path是一个存在的文件，返回True。否则返回False
+print(os.path.isdir(r'd:\project\python'))  # 如果path是一个存在的目录，则返回True。否则返回False
 # os.path.join(path1[, path2[, ...]])  将多个路径组合后返回，第一个绝对路径之前的参数将被忽略
-# os.path.getatime(path)  返回path所指向的文件或者目录的最后存取时间
-# os.path.getmtime(path)  返回path所指向的文件或者目录的最后修改时间
+print(os.path.getatime(r'd:\project\python\README.md'))  # 返回path所指向的文件或者目录的最后存取时间 print timestamp
+x = os.path.getatime(r'd:\project\python\README.md')
+print(time.ctime(x))  # print Thu Jan  5 11:46:15 2017
+print(os.path.getmtime(r'd:\project\python\README.md'))  # 返回path所指向的文件或者目录的最后修改时间
+y = os.path.getmtime(r'd:\project\python\README.md')
+print(time.ctime(y))
