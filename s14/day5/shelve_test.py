@@ -1,7 +1,7 @@
 import shelve
 # import datetime
 __author__ = "Steven Lee"
-# shelve模块是一个简单的k,v将内存数据通过文件持久化的模块，可以持久化任何pickle可支持的python数据格式
+# shelve模块是一个简单的k,v, 将内存数据通过文件持久化的模块，可以持久化任何pickle可支持的python数据格式
 
 d = shelve.open('shelve_test')  # 打开一个文件
 print(d.get("name"))
