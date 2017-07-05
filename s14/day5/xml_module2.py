@@ -14,8 +14,6 @@ et = ET.ElementTree(new_xml)  # 生成文档对象
 et.write("test.xml", encoding="utf-8", xml_declaration=True)
 
 ET.dump(new_xml)  # 打印生成的格式
-xml = xml.dom.minidom.parse("test.xml") # or xml.dom.minidom.parseString(xml_string)
+xml = xml.dom.minidom.parse("test.xml")  # or xml.dom.minidom.parseString(xml_string)
 pretty_xml_as_string = xml.toprettyxml()
 print(pretty_xml_as_string)
-
-xml2 = xml.dom.minidom.toxml()

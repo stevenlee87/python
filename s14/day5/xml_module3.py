@@ -21,7 +21,7 @@ def GenerateXml():
     employee.appendChild(ageE)
 
     f = open('employees2.xml', 'w', encoding='utf-8')
-    dom.writexml(f, addindent='  ', newl='\n', encoding='utf-8')
+    dom.writexml(f, addindent='    ', newl='\n', encoding='utf-8')
     f.close()
 
 
