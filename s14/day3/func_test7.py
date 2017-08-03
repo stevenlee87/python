@@ -41,3 +41,9 @@ def test3(name, age=18, **kwargs):
 test3('ste', 3, sex='male')
 test3('ste', sex='male', age=20)
 test3('steven')
+
+
+def get_info(*args):
+    print(args)
+
+get_info('master/cpus_percent')
