@@ -7,29 +7,29 @@ import math
 import time
 
 
-#dcos_master = input("Enter the DNS hostname or IP of your Marathon Instance : ")
+# dcos_master = input("Enter the DNS hostname or IP of your Marathon Instance : ")
 
-#max_mem_percent = int(input("Enter the Max percent of Mem Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
-#max_cpu_time = int(input("Enter the Max percent of CPU Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
-#trigger_mode = input("Enter which metric(s) to trigger Autoscale ('and', 'or') : ")
-#autoscale_multiplier = float(input("Enter Autoscale multiplier for triggered Autoscale (ie 1.5) : "))
-#max_instances = int(input("Enter the Max instances that should ever exist for this application (ie. 20) : "))
-#userid = input('Enter the username for the DCOS cluster : ')
-#password = input('Enter the password for the DCOS cluster : ')
-#marathon_app = input("Enter the Marathon Application Name to Configure Autoscale for from the Marathon UI : ")
+# max_mem_percent = int(input("Enter the Max percent of Mem Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
+# max_cpu_time = int(input("Enter the Max percent of CPU Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
+# trigger_mode = input("Enter which metric(s) to trigger Autoscale ('and', 'or') : ")
+# autoscale_multiplier = float(input("Enter Autoscale multiplier for triggered Autoscale (ie 1.5) : "))
+# max_instances = int(input("Enter the Max instances that should ever exist for this application (ie. 20) : "))
+# userid = input('Enter the username for the DCOS cluster : ')
+# password = input('Enter the password for the DCOS cluster : ')
+# marathon_app = input("Enter the Marathon Application Name to Configure Autoscale for from the Marathon UI : ")
 
-#max_mem_percent = 40
-#max_cpu_time = 40
-#trigger_mode = 'or'
-#max_instances = 10
-#autoscale_multiplier=4
+# max_mem_percent = 40
+# max_cpu_time = 40
+# trigger_mode = 'or'
+# max_instances = 10
+# autoscale_multiplier=4
 
 class Marathon(object):
-    def __init__(self, dcos_master,dcos_auth_token):
+    def __init__(self, dcos_master, dcos_auth_token):
         self.name = dcos_master
         self.uri=(dcos_master)
         if dcos_auth_token is not None:
-            self.headers={'Authorization': 'token='+dcos_auth_token, 'Content-type': 'application/json'}
+            self.headers={'Authorization': 'token=' + dcos_auth_token, 'Content-type': 'application/json'}
         else:
             self.headers={'Content-type': 'application/json'}
         self.apps = self.get_all_apps()
@@ -171,10 +171,10 @@ if __name__ == "__main__":
     trigger_var = 0
     while running == 1:
         # Initialize the Marathon object
-        aws_marathon = Marathon(dcos_master,dcos_auth_token)
-        print ("Marathon URI = ...", aws_marathon.uri)
-        print ("Marathon Headers = ...", aws_marathon.headers)
-        print ("Marathon name = ...", aws_marathon.name)
+        aws_marathon = Marathon(dcos_master, dcos_auth_token)
+        print("Marathon URI = ...", aws_marathon.uri)
+        print("Marathon Headers = ...", aws_marathon.headers)
+        print("Marathon name = ...", aws_marathon.name)
         # Call get_all_apps method for new object created from aws_marathon class and return all apps
         marathon_apps = aws_marathon.get_all_apps()
         print ("The following apps exist in Marathon...", marathon_apps)
