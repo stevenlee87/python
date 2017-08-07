@@ -191,7 +191,7 @@ if __name__ == "__main__":
 
         app_cpu_values = []
         app_mem_values = []
-        for task,agent in app_task_dict.items():
+        for task, agent in app_task_dict.items():
             #cpus_time =(task_stats['cpus_system_time_secs']+task_stats['cpus_user_time_secs'])
             #print ("Combined Task CPU Kernel and User Time for task", task, "=", cpus_time)
             print('Task = '+ task)
@@ -248,6 +248,7 @@ if __name__ == "__main__":
             #app_cpu_values.append(cpus_time)
             app_cpu_values.append(usage)
             app_mem_values.append(mem_utilization)
+
         # Normalized data for all tasks into a single value by averaging
         app_avg_cpu = (sum(app_cpu_values) / len(app_cpu_values))
         print ('Current Average  CPU Time for app', marathon_app, '=', app_avg_cpu)

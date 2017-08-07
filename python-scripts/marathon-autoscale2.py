@@ -2,7 +2,7 @@ import sys
 import requests
 import json
 # import math
-# import time
+import time
 __author__ = "Steven Lee"
 
 # marathon_address = input("Enter the DNS hostname or IP of your Marathon Instance : ")
@@ -24,17 +24,15 @@ __author__ = "Steven Lee"
 
 
 class Marathon(object):
-    def __init__(self, marathon_address, dcos_auth_token):
+    def __init__(self, marathon_address):
         self.name = marathon_address
         self.uri = marathon_address
-        if dcos_auth_token is not None:
-            self.headers = {'Authorization': 'token=' + dcos_auth_token, 'Content-type': 'application/json'}
-        else:
-            self.headers = {'Content-type': 'application/json'}
+        self.headers = {'Content-type': 'application/json'}
         self.apps = self.get_all_apps()
 
     def get_all_apps(self):
-        response = requests.get(self.uri + '/v2/apps', headers=self.headers, verify=False).json()
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        response = requests.get(self.uri + '/v2/apps', headers=self.headers, verify=False, auth=(userid, password)).json()
         if not response['apps']:
             print("No Apps found on Marathon")
             sys.exit(1)
@@ -46,16 +44,56 @@ class Marathon(object):
             print("Found the following App LIST on Marathon =", apps)
             return apps
 
+    def get_app_details(self, marathon_app):
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        response = requests.get(self.uri + '/v2/apps/'+ marathon_app, headers=self.headers, verify=False, auth=(userid, password)).json()
+        if (response['app']['tasks'] ==[]):
+            print ('No task data on Marathon for App !', marathon_app)
+        else:
+            app_instances = response['app']['instances']
+            self.appinstances = app_instances
+            print(marathon_app, "has", self.appinstances, "deployed instances")
+            app_task_dict={}
+            for i in response['app']['tasks']:
+                taskid = i['id']
+                hostid = i['host']
+                slaveId=i['slaveId']
+                print ('DEBUG - taskId=', taskid +' running on '+hostid + 'which is Mesos Slave Id '+slaveId)
+                app_task_dict[str(taskid)] = str(slaveId)
+            return app_task_dict
 
-def marathon_auth_login(marathon_address, userid, password):
-    '''
-    Will login to the DCOS ACS Service and RETURN A JWT TOKEN for subsequent API requests to Marathon, Mesos, etc
-    '''
-    rawdata = {'uid' : userid, 'password' : password}
-    login_headers={'Content-type': 'application/json'}
-    response = requests.post(marathon_address, headers=login_headers, data=json.dumps(rawdata),verify=False).json()
-    auth_token=response['token']
-    return auth_token
+    # def scale_app(self,marathon_app, autoscale_multiplier):
+    #     target_instances_float=self.appinstances * autoscale_multiplier
+    #     target_instances=math.ceil(target_instances_float)
+    #     if (target_instances > max_instances):
+    #         print("Reached the set maximum instances of", max_instances)
+    #         target_instances=max_instances
+    #     else:
+    #         target_instances=target_instances
+    #     data ={'instances': target_instances}
+    #     json_data=json.dumps(data)
+    #     #headers = {'Content-type': 'application/json'}
+    #     response=requests.put(self.uri + '/v2/apps/'+ marathon_app, json_data,headers=self.headers,verify=False, auth=(userid, password))
+    #     print ('Scale_app return status code =', response.status_code)
+    #
+    # def scale_down_app(self, marathon_app, autoscale_multiplier):
+    #     target_instances=math.ceil(self.appinstances / autoscale_multiplier)
+    #     if (target_instances < min_instances):
+    #         print("No scale, reached the minimum instances of ", min_instances)
+    #         target_instances=min_instances
+    #     else:
+    #         target_instances=target_instances
+    #     if (self.appinstances != target_instances):
+    #         data ={'instances': target_instances}
+    #         json_data=json.dumps(data)
+    #         #headers = {'Content-type': 'application/json'}
+    #         response=requests.put(self.uri + '/v2/apps/'+ marathon_app, json_data, headers=self.headers,verify=False)
+    #         print ('Scale_down_app return status code =', response.status_code)
+
+def timer():
+    print("Successfully completed a cycle, sleeping for 30 seconds ...")
+    time.sleep(30)
+    return
 
 if __name__ == "__main__":
     import argparse
@@ -101,12 +139,26 @@ if __name__ == "__main__":
     cool_down_factor = float(args.cool_down_factor)
     trigger_number = float(args.trigger_number)
 
-    if userid is not None:
-        marathon_auth_token=marathon_auth_login(marathon_address, userid, password)
-        print('Auth Token is = ' + marathon_auth_token)
-    else:
-        marathon_auth_token=None
     running = 1
     # Initialize variables
     cool_down = 0
     trigger_var = 0
+    while running == 1:
+        # Initialize the Marathon object
+        aws_marathon = Marathon(marathon_address)
+        print("Marathon URI = ...", aws_marathon.uri)
+        print("Marathon Headers = ...", aws_marathon.headers)
+        print("Marathon name = ...", aws_marathon.name)
+        # Call get_all_apps method for new object created from aws_marathon class and return all apps
+        marathon_apps = aws_marathon.get_all_apps()
+        print ("The following apps exist in Marathon...", marathon_apps)
+        # Quick sanity check to test for apps existence in MArathon.
+        if (marathon_app in marathon_apps):
+            print ("  Found your Marathon App=", marathon_app)
+        else:
+            print ("  Could not find your App =", marathon_app)
+            timer()
+            continue
+        # Return a dictionary comprised of the target app taskId and hostId.
+        app_task_dict = aws_marathon.get_app_details(marathon_app)
+        print ("    Marathon  App 'tasks' for", marathon_app, "are=", app_task_dict)
