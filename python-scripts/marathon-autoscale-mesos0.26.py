@@ -76,23 +76,24 @@ class Marathon(object):
             target_instances = target_instances
         data = {'instances': target_instances}
         json_data = json.dumps(data)
-        #headers = {'Content-type': 'application/json'}
+        # headers = {'Content-type': 'application/json'}
         response = requests.put(self.uri + '/v2/apps/' + marathon_app, json_data, headers = self.headers, verify=False, auth=(userid, password))
         print(colored("response.status_code is:" + str(response.status_code), 'red'))
         print('Scale_app return status code =', response.status_code)
 
     def scale_down_app(self, marathon_app, autoscale_multiplier):
         target_instances = math.ceil(self.appinstances / autoscale_multiplier)
+        print(colored(target_instances, "red"))
         if (target_instances < min_instances):
             print("No scale, reached the minimum instances of ", min_instances)
-            target_instances=min_instances
+            target_instances = min_instances
         else:
             target_instances = target_instances
         if (self.appinstances != target_instances):
             print(colored('Hello,World!','red'))
             data ={'instances': target_instances}
             json_data = json.dumps(data)
-            #headers = {'Content-type': 'application/json'}
+            # headers = {'Content-type': 'application/json'}
             response = requests.put(self.uri + '/v2/apps/' + marathon_app, json_data, headers=self.headers, verify=False, auth=(userid, password))
             print(colored("response.status_code is:" + str(response.status_code), 'red'))
             print('Scale_down_app return status code =', response.status_code)
@@ -117,7 +118,7 @@ def get_task_agentstatistics(task, agent):
 
 def timer():
     print("Successfully completed a cycle, sleeping for 30 seconds ...")
-    time.sleep(10)
+    time.sleep(30)
     return
 
 if __name__ == "__main__":
@@ -200,7 +201,8 @@ if __name__ == "__main__":
             if task_stats != None:
                 cpus_system_time_secs0 = float(task_stats['cpus_system_time_secs'])
                 cpus_user_time_secs0 = float(task_stats['cpus_user_time_secs'])
-                timestamp0 = float(task_stats['timestamp'])
+                # timestamp0 = float(task_stats['timestamp'])
+                timestamp0 = time.time()
             else:
                 cpus_system_time_secs0 = 0
                 cpus_user_time_secs0 = 0
@@ -212,7 +214,8 @@ if __name__ == "__main__":
             if task_stats != None:
                 cpus_system_time_secs1 = float(task_stats['cpus_system_time_secs'])
                 cpus_user_time_secs1 = float(task_stats['cpus_user_time_secs'])
-                timestamp1 = float(task_stats['timestamp'])
+                # timestamp1 = float(task_stats['timestamp'])
+                timestamp1 = time.time()
             else:
                 cpus_system_time_secs0 = 0
                 cpus_user_time_secs0 = 0
@@ -279,7 +282,7 @@ if __name__ == "__main__":
                 aws_marathon.scale_app(marathon_app, autoscale_multiplier)
                 trigger_var = 0
             elif ((app_avg_cpu < max_cpu_time) or (app_avg_mem < max_mem_percent)) and (cool_down >= cool_down_factor):
-                print(colored("Autoscale triggered based on Mem or CPU are down the threshold"))
+                print(colored("Autoscale triggered based on Mem or CPU are down the threshold", "red"))
                 aws_marathon.scale_down_app(marathon_app, autoscale_multiplier)
                 cool_down = 0
             elif (app_avg_cpu > max_cpu_time) or (app_avg_mem > max_mem_percent):
