@@ -11,7 +11,7 @@ __author__ = "Steven Lee"
 # marathon_address = input("Enter the DNS hostname or IP of your Marathon Instance : ")
 
 # max_mem_percent = int(input("Enter the Max percent of Mem Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
-# max_cpu_time = int(input("Enter the Max percent of CPU Usage averaged across all Application Instances to trigger Autoscale (ie. 80) : "))
+# max_load = int(input("Enter the Max Load averaged across all Application Instances to trigger Autoscale (ie. 50) : "))
 # trigger_mode = input("Enter which metric(s) to trigger Autoscale ('and', 'or') : ")
 # autoscale_multiplier = float(input("Enter Autoscale multiplier for triggered Autoscale (ie 1.5) : "))
 # max_instances = int(input("Enter the Max instances that should ever exist for this application (ie. 20) : "))
@@ -20,7 +20,7 @@ __author__ = "Steven Lee"
 # marathon_app = input("Enter the Marathon Application Name to Configure Autoscale for from the Marathon UI : ")
 
 # max_mem_percent = 40
-# max_cpu_time = 40
+# max_load = 40
 # trigger_mode = 'or'
 # max_instances = 10
 # autoscale_multiplier=4
@@ -115,6 +115,20 @@ def get_task_agentstatistics(task, agent):
             print('****Specific stats for task',executor_id,'=',task_stats)
             return task_stats
 
+def get_agent_metricssnapshot(task, agent):
+    # Get the performance Metrics for all the tasks for the Marathon App specified
+    # by connecting to the Mesos Agent and then making a REST call against Mesos statistics
+    # Return to Statistics for the specific task for the marathon_app
+
+    marathon_headers = {'Content-type': 'application/json'}
+    response = requests.get('http://' + agent + ':5051' + '/metrics/snapshot', verify=False, headers = marathon_headers, allow_redirects = True).json()
+    # print('DEBUG -- Getting Mesos Metrics for Mesos Agent =',agent)
+    system_load_1min = response['system/load_1min']
+    print("DEBUG -- Printing each system/load_1min ", system_load_1min)
+    if (system_load_1min != None):
+        agent_stats = response
+        print('****Specific stats for task',agent,'=',agent_stats)
+        return agent_stats
 
 def timer():
     print("Successfully completed a cycle, sleeping for 30 seconds ...")
@@ -130,8 +144,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_mem_percent',
                         help='The Max percent of Mem Usage averaged across all Application Instances to trigger Autoscale (ie. 80)',
                         required=True, type=float)
-    parser.add_argument('--max_cpu_time',
-                        help='The Max percent of CPU Usage averaged across all Application Instances to trigger Autoscale (ie. 80)',
+    parser.add_argument('--max_load',
+                        help='The Max Load averaged across all Application Instances to trigger Autoscale (ie. 50)',
                         required=True, type=float)
     parser.add_argument('--trigger_mode', help='Which metric(s) to trigger Autoscale (' and ', ' or ')', required=True)
     parser.add_argument('--autoscale_multiplier', help='Autoscale multiplier for triggered Autoscale (ie 1.5)',
@@ -154,7 +168,7 @@ if __name__ == "__main__":
 
     marathon_address = args.marathon_address
     max_mem_percent = float(args.max_mem_percent)
-    max_cpu_time = float(args.max_cpu_time)
+    max_load = float(args.max_load)
     trigger_mode = args.trigger_mode
     autoscale_multiplier = float(args.autoscale_multiplier)
     max_instances = float(args.max_instances)
@@ -189,52 +203,24 @@ if __name__ == "__main__":
         app_task_dict = aws_marathon.get_app_details(marathon_app)
         print("    Marathon  App 'tasks' for", marathon_app, "are=", app_task_dict)
 
-        app_cpu_values = []
+        app_load_values = []
         app_mem_values = []
         for task, agent in app_task_dict.items():
-            #cpus_time =(task_stats['cpus_system_time_secs']+task_stats['cpus_user_time_secs'])
-            #print("Combined Task CPU Kernel and User Time for task", task, "=", cpus_time)
             print('Task = '+ task)
             print('Agent = ' + agent)
-            # Compute CPU usage
-            task_stats = get_task_agentstatistics(task, agent)
-            if task_stats != None:
-                cpus_system_time_secs0 = float(task_stats['cpus_system_time_secs'])
-                cpus_user_time_secs0 = float(task_stats['cpus_user_time_secs'])
-                # timestamp0 = float(task_stats['timestamp'])
-                timestamp0 = time.time()
+            # Compute Load
+            agent_stats = get_agent_metricssnapshot(task, agent)
+            if agent_stats != None:
+                system_load_1min = float(agent_stats['system/load_1min'])
             else:
-                cpus_system_time_secs0 = 0
-                cpus_user_time_secs0 = 0
-                timestamp0 = 0
-
-            time.sleep(1)
-
-            task_stats = get_task_agentstatistics(task, agent)
-            if task_stats != None:
-                cpus_system_time_secs1 = float(task_stats['cpus_system_time_secs'])
-                cpus_user_time_secs1 = float(task_stats['cpus_user_time_secs'])
-                # timestamp1 = float(task_stats['timestamp'])
-                timestamp1 = time.time()
-            else:
-                cpus_system_time_secs0 = 0
-                cpus_user_time_secs0 = 0
-                timestamp0 = 0
-
-            cpus_time_total0 = cpus_system_time_secs0 + cpus_user_time_secs0
-            cpus_time_total1 = cpus_system_time_secs1 + cpus_user_time_secs1
-            cpus_time_delta = cpus_time_total1 - cpus_time_total0
-            timestamp_delta = timestamp1 - timestamp0
-
-            # CPU percentage usage
-            usage = float(cpus_time_delta / timestamp_delta) * 100
+                system_load_1min = 0
 
             # RAM usage
+            task_stats = get_task_agentstatistics(task, agent)
             if task_stats != None:
                 mem_rss_bytes = int(task_stats['mem_rss_bytes'])
                 mem_limit_bytes = int(task_stats['mem_limit_bytes'])
                 mem_utilization = 100 * (float(mem_rss_bytes) / float(mem_limit_bytes))
-
             else:
                 mem_rss_bytes = 0
                 mem_limit_bytes = 0
@@ -246,53 +232,52 @@ if __name__ == "__main__":
             print("task", task, "mem_limit_bytes=", mem_limit_bytes)
             print()
 
-            # app_cpu_values.append(cpus_time)
-            app_cpu_values.append(usage)
+            app_load_values.append(system_load_1min)
             app_mem_values.append(mem_utilization)
 
         # Normalized data for all tasks into a single value by averaging
-        app_avg_cpu = (sum(app_cpu_values) / len(app_cpu_values))
-        print('Current Average  CPU Time for app', marathon_app, '=', app_avg_cpu)
+        app_avg_load = (sum(app_load_values) / len(app_load_values))
+        print('Current Average Load for app', marathon_app, '=', app_avg_load)
         app_avg_mem=(sum(app_mem_values) / len(app_mem_values))
         print('Current Average Mem Utilization for app', marathon_app,'=', app_avg_mem)
         #Evaluate whether an autoscale trigger is called for
         print('\n')
         if (trigger_mode == "and"):
-            if (app_avg_cpu > max_cpu_time) and (app_avg_mem > max_mem_percent) and (trigger_var >= trigger_number):
-                print("Autoscale triggered based on 'both' Mem & CPU exceeding threshold")
+            if (app_avg_load > max_load) and (app_avg_mem > max_mem_percent) and (trigger_var >= trigger_number):
+                print("Autoscale triggered based on 'both' Mem & Load exceeding threshold")
                 aws_marathon.scale_app(marathon_app, autoscale_multiplier)
                 trigger_var = 0
-            elif (app_avg_cpu < max_cpu_time) and (app_avg_mem < max_mem_percent) and (cool_down >= cool_down_factor):
-                print("Autoscale down triggered based on 'both' Mem & CPU are down the threshold")
+            elif (app_avg_load < max_load) and (app_avg_mem < max_mem_percent) and (cool_down >= cool_down_factor):
+                print("Autoscale down triggered based on 'both' Mem & Load are down the threshold")
                 aws_marathon.scale_down_app(marathon_app, autoscale_multiplier)
                 cool_down = 0
-            elif (app_avg_cpu > max_cpu_time) and (app_avg_mem > max_mem_percent):
+            elif (app_avg_load > max_load) and (app_avg_mem > max_mem_percent):
                 trigger_var += 1
                 cool_down = 0
                 print("Limits exceeded but waiting for trigger_number to be exceeded too to scale up, ", trigger_var)
-            elif (app_avg_cpu < max_cpu_time) and (app_avg_mem < max_mem_percent) and (cool_down < cool_down_factor):
+            elif (app_avg_load < max_load) and (app_avg_mem < max_mem_percent) and (cool_down < cool_down_factor):
                 cool_down += 1
                 trigger_var = 0
                 print("Limits are not exceeded but waiting for trigger_number to be exceeded too to scale down, ", cool_down)
             else:
                 print("Both values were not greater than autoscale targets")
         elif (trigger_mode == "or"):
-            if ((app_avg_cpu > max_cpu_time) or (app_avg_mem > max_mem_percent)) and (trigger_var >= trigger_number):
-                print("Autoscale triggered based Mem 'or' CPU exceeding threshold")
+            if ((app_avg_load > max_load) or (app_avg_mem > max_mem_percent)) and (trigger_var >= trigger_number):
+                print("Autoscale triggered based Mem 'or' Load exceeding threshold")
                 aws_marathon.scale_app(marathon_app, autoscale_multiplier)
                 trigger_var = 0
-            elif ((app_avg_cpu < max_cpu_time) or (app_avg_mem < max_mem_percent)) and (cool_down >= cool_down_factor):
-                print(colored("Autoscale triggered based on Mem or CPU are down the threshold", "red"))
+            elif ((app_avg_load < max_load) or (app_avg_mem < max_mem_percent)) and (cool_down >= cool_down_factor):
+                print(colored("Autoscale triggered based on Mem or Load are down the threshold", "red"))
                 aws_marathon.scale_down_app(marathon_app, autoscale_multiplier)
                 cool_down = 0
-            elif (app_avg_cpu > max_cpu_time) or (app_avg_mem > max_mem_percent):
+            elif (app_avg_load > max_load) or (app_avg_mem > max_mem_percent):
                 trigger_var += 1
                 cool_down = 0
                 print("Limits exceeded but waiting for trigger_number to be exceeded too to scale up, ", trigger_var)
-            elif (app_avg_cpu < max_cpu_time) or (app_avg_mem < max_mem_percent):
+            elif (app_avg_load < max_load) or (app_avg_mem < max_mem_percent):
                 cool_down += 1
                 trigger_var = 0
                 print("Limits are not exceeded but waiting for trigger_number to be exceeded too to scale down, ", cool_down)
             else:
-                print("Neither Mem 'or' CPU values exceeding threshold")
+                print("Neither Mem 'or' Load values exceeding threshold")
         timer()
